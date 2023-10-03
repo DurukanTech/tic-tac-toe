@@ -106,3 +106,17 @@
   bottom:300px;
   color: red;
 }
+
+@media only screen and (max-width:750px){
+  .player-score{
+    flex-direction: column;
+  }
+  .score1{
+    right: 0;
+    bottom: 0;
+  }
+  .score2{
+    left: 0;
+    bottom: 50px;
+  }
+}
