@@ -1,25 +1,108 @@
-import logo from './logo.svg';
-import './App.css';
+import Cell from "./components/Cell"
+import { useState,useEffect,useRef } from "react"
+const App = () => {
+  const [cells,setCells] = useState(["","","","","","","","",""])
+  const [go,setGo] = useState('circle')
+  const [winningMessage,setWinningMessage] = useState(null)
+  const [score1,setScore1] = useState(0)
+  const [score2,setScore2] = useState(0)
 
-function App() {
+
+  const checkTie = () =>{
+    if (cells.includes('') === false && winningMessage === null){
+      setWinningMessage('Tie! Be better Guys :(')
+      return
+    }
+  }
+
+
+  const setScores = () => {
+      if(winningMessage === 'Circle Wins!'){
+        setScore1(score1 + 1)
+        return
+      }
+      if(winningMessage === 'Cross Wins!'){
+        setScore2(score2 + 1)
+        return
+      }
+  }
+
+  useEffect(()=>{
+    setScores()
+  },[winningMessage])
+  
+
+  const checkScore = () => {
+    const winningCombos =[
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6],
+    ]
+
+    winningCombos.forEach(array => {
+      let circleWins = array.every(cell => cells[cell] === 'circle')
+
+      if (circleWins){
+        setWinningMessage('Circle Wins!')
+        return
+      }
+    })
+
+    winningCombos.forEach(array => {
+      let crossWins = array.every(cell => cells[cell] === 'cross')
+
+      if (crossWins){
+        setWinningMessage('Cross Wins!')
+        return
+      }
+    })
+
+    
+  }
+
+  
+
+  useEffect(()=>{
+    checkScore()
+    checkTie()
+  },[cells])
+
+  const message = "it is now " + go + "'s go."
+
+  const reset = () => {
+    setCells(["","","","","","","","",""])
+    setGo('circle')
+    setWinningMessage(null)
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <div className="gameboard">
+          {cells.map ((cell,index) => <Cell 
+            key={index} 
+            id={index} 
+            cell={cell} 
+            setCells={setCells}
+            go={go}
+            setGo={setGo}
+            cells={cells}
+            winningMessage={winningMessage}
+            setWinningMessage={setWinningMessage}
+          />)}
+      </div>
+      <div className="text">
+      <p>{winningMessage || message}</p>
+      </div>
+
+      <div className="reset-button">
+        <button onClick={reset}>Reset</button>
+      </div>
+      <div className="player-score">
+        <p className="score1">Circle: {score1}</p>
+        <p className="score2">Cross: {score2}</p>
+      </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
